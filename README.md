@@ -269,9 +269,3 @@ Le malus est plafonné à **−6 points** à partir de trois bugs.
 - [Plateforme de dépôt Ametice](https://ametice.univ-amu.fr/course/view.php?id=145488)
 - [Principe d’un oracle de test](https://en.wikipedia.org/wiki/Test_oracle)
 - [Code fourni en amphithéâtre — à télécharger](https://casali.site/wp-content/uploads/2024/10/SAE_02_vote.zip)
-
-## Points à clarifier dans l’énoncé
-
-- La signification de `ZZZ` dans le nom de l’archive n’est pas précisée.
-- Le barème annonce **5 points par système**, dont **4 pour l’algorithme**, tout en indiquant **1 point par fichier oracle** et en demandant au moins **deux oracles par projet**. Le décompte exact reste à confirmer.
-- L’année des échéances n’est pas précisée dans le texte fourni.
