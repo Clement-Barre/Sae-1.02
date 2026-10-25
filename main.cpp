@@ -9,56 +9,90 @@ struct joueur {
     unsigned score;
 };
 
-joueur jeu_temporaire (joueur j1, joueur j2)
+joueur& jeu_temporaire(joueur& j1, joueur&)
 {
     return j1;
 }
 
-vector<joueur> tri_joueur_selon_score (vector<joueur> & vecteur_joueur) // Les scores sont tries dans l'ordre decroissant
+vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur)
 {
-    for (unsigned numero_joueur; numero_joueur < vecteur_joueur.size() -1 ; ++numero_joueur)
+    // Tri des scores dans l'ordre décroissant.
+    for (size_t numero_joueur = 1;
+         numero_joueur < vecteur_joueur.size();
+         ++numero_joueur)
     {
-        unsigned indice_de_decalage = ;
-        while (vecteur_joueur[numero_joueur].score > vecteur_joueur[numero_joueur + indice_de_decalage].score)
+        size_t position = numero_joueur;
+
+        while (position > 0 &&
+               vecteur_joueur[position].score >
+               vecteur_joueur[position - 1].score)
         {
-            joueur conteneur_temporaire_de_joueur = vecteur_joueur[numero_joueur];
-            vecteur_joueur[numero_joueur] = vecteur_joueur[numero_joueur + indice_de_decalage];
-            vecteur_joueur[numero_joueur + indice_de_decalage] = conteneur_temporaire_de_joueur;
-            ++ indice_de_decalage;
+            joueur temporaire = vecteur_joueur[position];
+            vecteur_joueur[position] = vecteur_joueur[position - 1];
+            vecteur_joueur[position - 1] = temporaire;
+
+            --position;
         }
     }
+
     return vecteur_joueur;
 }
 
-vector<joueur> tournoi_systeme_suisse (vector<joueur> & vecteur_joueur)
+vector<joueur> tournoi_systeme_suisse(vector<joueur>& vecteur_joueur)
 {
-    while (vecteur_joueur[vecteur_joueur.size()-1].score = vecteur_joueur[vecteur_joueur.size()-2].score)
+    if (vecteur_joueur.size() < 2)
     {
-        for (unsigned numero_joueur = vecteur_joueur.size()-1; numero > 0; numero_joueur = numero_joueur - 2)
-        {
-            if (numero_joueur = 1 && vecteur_joueur.size() % 2 != 0)
-                ++vecteur_joueur[numero_joueur].score;
-            ++jeu_temporaire(vecteur_joueur[numero_joueur], vecteur_joueur[numero_joueur-1]).score;
-        }
-        vecteur_joueur = tri_joueur_selon_score(vecteur_joueur);
+        return vecteur_joueur;
     }
+
+    tri_joueur_selon_score(vecteur_joueur);
+
+    while (vecteur_joueur.back().score ==
+           vecteur_joueur[vecteur_joueur.size() - 2].score)
+    {
+        size_t joueurs_restants = vecteur_joueur.size();
+
+        while (joueurs_restants >= 2)
+        {
+            ++jeu_temporaire(
+                vecteur_joueur[joueurs_restants - 1],
+                vecteur_joueur[joueurs_restants - 2]
+            ).score;
+
+            joueurs_restants -= 2;
+        }
+
+        if (joueurs_restants == 1)
+        {
+            ++vecteur_joueur[0].score;
+        }
+
+        tri_joueur_selon_score(vecteur_joueur);
+    }
+
     return vecteur_joueur;
 }
-
 
 int main()
 {
-
-    vecteur<joueur> vecteur_joueur = {
+    vector<joueur> vecteur_joueur = {
         {"Aaron", 5},
         {"Clement", 7},
         {"Jonathan", 4},
         {"Alain", 10}
     };
-    vecteur_trie = tri_joueur_selon_score(vecteur_joueur);
-    for (unsigned numero_joueur = 0; numero_joueur < vecteur_joueurs.size(); ++numero_joueur)
+
+    tri_joueur_selon_score(vecteur_joueur);
+
+    for (size_t numero_joueur = 0;
+         numero_joueur < vecteur_joueur.size();
+         ++numero_joueur)
     {
-        cout << vecteur_joueur[numero_joueur] << endl;
+        cout << vecteur_joueur[numero_joueur].prenom
+             << " : "
+             << vecteur_joueur[numero_joueur].score
+             << endl;
     }
+
     return 0;
 }
