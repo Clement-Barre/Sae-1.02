@@ -13,7 +13,7 @@ struct joueur {
 
 
 void ToLower(string& chaine) {
-    for (size_t i = 0; i < chaine.size(); i++) {
+    for (size_t i = 0; i < chaine.size(); ++i) {
         chaine[i] = tolower(chaine[i]);
     }
 }
@@ -98,20 +98,20 @@ joueur& jeu_temporaire(joueur& j1, joueur&)
 
 vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur)
 {
-    // Tri des scores dans l'ordre décroissant.
-    for (size_t numero_joueur = 1;
+    // Tri des scores dans l'ordre croissant.
+    for (size_t numero_joueur = 0;
          numero_joueur < vecteur_joueur.size();
          ++numero_joueur)
     {
         size_t position = numero_joueur;
 
-        while (position > 0 &&
+        while (position < vecteur_joueur.size()-1 &&
                vecteur_joueur[position].score >
-               vecteur_joueur[position - 1].score)
+               vecteur_joueur[position + 1].score)
         {
             joueur temporaire = vecteur_joueur[position];
-            vecteur_joueur[position] = vecteur_joueur[position - 1];
-            vecteur_joueur[position - 1] = temporaire;
+            vecteur_joueur[position] = vecteur_joueur[position + 1];
+            vecteur_joueur[position + 1] = temporaire;
 
             --position;
         }
@@ -136,7 +136,7 @@ vector<joueur> tournoi_systeme_suisse(vector<joueur>& vecteur_joueur)
 
         while (joueurs_restants >= 2)
         {
-            ++jeu_temporaire(
+            ++pile_face(
                 vecteur_joueur[joueurs_restants - 1],
                 vecteur_joueur[joueurs_restants - 2]
             ).score;
@@ -155,19 +155,8 @@ vector<joueur> tournoi_systeme_suisse(vector<joueur>& vecteur_joueur)
     return vecteur_joueur;
 }
 
-
-
-int main()
+void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
 {
-    vector<joueur> vecteur_joueur = {
-        {"Aaron", 1},
-        {"Clement", 1},
-        {"Jonathan", 1},
-        {"Alain", 1}
-    };
-
-    tri_joueur_selon_score(vecteur_joueur);
-
     for (size_t numero_joueur = 0;
          numero_joueur < vecteur_joueur.size();
          ++numero_joueur)
@@ -177,13 +166,53 @@ int main()
              << vecteur_joueur[numero_joueur].score
              << endl;
     }
+}
 
-    string test = "TEST";
-    ToLower(test);
-    cout << test << endl;
-    cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
-    pile_face(vecteur_joueur[1], vecteur_joueur[2]).score += 1;
-    cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
+vector<joueur> creationVecteurJoueur(vector<joueur>& vecteur_joueur)
+{
+    size_t nb_joueur;
+    cout << "Combien de joueurs il y aura-t-il?" << endl;
+    cin >> nb_joueur;
+    vecteur_joueur.resize(nb_joueur);
+    string nom_joueur;
+    for (size_t indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
+    {
+        cout << "Quel est le nom du joueur numéro " << indice_joueur+1 << " ?" << endl;
+        cin >> nom_joueur;
+        joueur joueur_temporaire;
+        joueur_temporaire.prenom = nom_joueur;
+        joueur_temporaire.score = 0;
+        vecteur_joueur[indice_joueur] = joueur_temporaire;
+    }
+    return vecteur_joueur;
+}
+
+int main()
+{
+    // vector<joueur> vecteur_joueur = {
+    //     {"Aaron", 1},
+    //     {"Clement", 1},
+    //     {"Jonathan", 1},
+    // };
+
+    vector<joueur> vecteur_joueur;
+    vecteur_joueur = creationVecteurJoueur(vecteur_joueur);
+
+    //tri_joueur_selon_score(vecteur_joueur);
+
+    affichageVecteurJoueur(vecteur_joueur);
+
+    // string test = "TEST";
+    // ToLower(test);
+    // cout << test << endl;
+
+    // cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
+    // pile_face(vecteur_joueur[1], vecteur_joueur[2]).score += 1;
+    // cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
+
+    // tournoi_systeme_suisse(vecteur_joueur);
+
+    // affichageVecteurJoueur(vecteur_joueur);
 
     return 0;
 }
