@@ -5,7 +5,6 @@
 
 using namespace std;
 
-
 struct joueur {
     string prenom;
     unsigned score;
@@ -198,23 +197,22 @@ void tournoi()
         getline (cin, jeu_choisi);
     }
 
-
     vector<joueur> vecteur_joueur;
     size_t nb_joueur;
-    cout << "Combien de joueurs il y aura-t-il?" << endl;
+    cout << endl << "Combien de joueurs il y aura-t-il?" << endl;
     cin >> nb_joueur;
     vecteur_joueur = creationVecteurJoueur(vecteur_joueur, nb_joueur);
-    // affichageVecteurJoueur(vecteur_joueur);
 
-    cout << "Systèmes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel système voulez-vous utiliser?" << endl << endl;
+    cout << endl << "Systèmes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel système voulez-vous utiliser?" << endl << endl;
     string systeme_choisi = "";
     getline (cin, systeme_choisi);
     ToLower(systeme_choisi);
-    while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket") // Ajouter les autres jeux plus tard avec des ||
+    while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
     {
         cout << "Ceci n'est pas un système présent dans notre système" << endl << "Choisissez un système présent dans la liste de système affichée plus haut" << endl << endl;
         getline (cin, systeme_choisi);
     }
+
     if (systeme_choisi == "suisse")
     {
         vecteur_joueur = tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
