@@ -36,6 +36,9 @@ joueur& pile_face(joueur& j1, joueur& j2) {
         nomJoueurPasChoix = j1.prenom;
     }
 
+    cout << "Ce match de pile ou face oppose " << j1.prenom << " a " << j2.prenom << endl;
+    cout << nomJoueurChoix << "tu as ete choisie, donc a toi de decider de prendre pile ou face" << endl;
+
     while ( not (choixJoueur == "pile" || choixJoueur == "face") ) {
         cout << "Pile ou Face " << nomJoueurChoix << " : ";
         cin >> choixJoueur ;
@@ -54,10 +57,10 @@ joueur& pile_face(joueur& j1, joueur& j2) {
     if ( choixJoueur == "pile") {
         if ( rdNombre == 0) {
             if ( rdPerso == 0) {
-                cout << "1 Le resultat du lancer est Pile. Donc le gagnant est " << nomJoueurPasChoix << endl;
+                cout << "1 Le resultat du lancer est Pile. Donc le gagnant est " << nomJoueurChoix << endl;
                 return j1;
             } else {
-                cout << "2 Le resultat du lancer est Pile. Donc le gagnant est " << nomJoueurChoix << endl;
+                cout << "2 Le resultat du lancer est Pile. Donc le gagnant est " << nomJoueurPasChoix << endl;
                 return j2;
             }
         } else {
@@ -175,7 +178,7 @@ vector<joueur> creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_
     string nom_joueur;
     for (size_t indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
     {
-        cout << "Quel est le nom du joueur numéro " << indice_joueur+1 << " ?" << endl;
+        cout << "Quel est le nom du joueur numero " << indice_joueur+1 << " ?" << endl;
         cin >> nom_joueur;
         joueur joueur_temporaire;
         joueur_temporaire.prenom = nom_joueur;
@@ -187,13 +190,13 @@ vector<joueur> creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_
 
 void tournoi()
 {
-    cout << "Jeux:" << endl << ">> Pile ou Face" << endl << ">> Deuxième jeu" << endl << ">> Troisième jeu" << endl << endl << "A quel jeu voulez-vous jouer?" << endl << endl;
+    cout << "Jeux:" << endl << ">> Pile ou Face" << endl << ">> Deuxieme jeu" << endl << ">> Troisieme jeu" << endl << endl << "A quel jeu voulez-vous jouer?" << endl << endl;
     string jeu_choisi = "";
     getline (cin, jeu_choisi);
     ToLower(jeu_choisi);
     while (jeu_choisi != "pile ou face") // Ajouter les autres jeux plus tard avec des &&
     {
-        cout << "Ceci n'est pas un jeu présent dans notre catalogue" << endl << "Choisissez un jeu présent dans la liste de jeux affichée plus haut" << endl << endl;
+        cout << "Ceci n'est pas un jeu present dans notre catalogue" << endl << "Choisissez un jeu present dans la liste de jeux affichee plus haut" << endl << endl;
         getline (cin, jeu_choisi);
     }
 
@@ -203,13 +206,13 @@ void tournoi()
     cin >> nb_joueur;
     vecteur_joueur = creationVecteurJoueur(vecteur_joueur, nb_joueur);
 
-    cout << endl << "Systèmes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel système voulez-vous utiliser?" << endl << endl;
+    cout << endl << "Systemes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel systeme voulez-vous utiliser?" << endl << endl;
     string systeme_choisi = "";
     getline (cin, systeme_choisi);
     ToLower(systeme_choisi);
     while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
     {
-        cout << "Ceci n'est pas un système présent dans notre système" << endl << "Choisissez un système présent dans la liste de système affichée plus haut" << endl << endl;
+        cout << "Ceci n'est pas un systeme present dans notre systeme" << endl << "Choisissez un systeme present dans la liste de systeme affichee plus haut" << endl << endl;
         getline (cin, systeme_choisi);
     }
 
@@ -218,9 +221,9 @@ void tournoi()
         vecteur_joueur = tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
     }
     cout << endl << "Podium:" << endl
-         << "1ère place: " << vecteur_joueur[vecteur_joueur.size()-1].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-1].score << endl
-         << "2ème place: " << vecteur_joueur[vecteur_joueur.size()-2].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-2].score << endl
-         << "3ème place: " << vecteur_joueur[vecteur_joueur.size()-3].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-3].score << endl;
+         << "1ere place: " << vecteur_joueur[vecteur_joueur.size()-1].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-1].score << endl
+         << "2eme place: " << vecteur_joueur[vecteur_joueur.size()-2].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-2].score << endl
+         << "3eme place: " << vecteur_joueur[vecteur_joueur.size()-3].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-3].score << endl;
 
     if (nb_joueur > 3)
     {
