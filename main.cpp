@@ -37,7 +37,7 @@ joueur& pile_face(joueur& j1, joueur& j2) {
     }
 
     cout << "Ce match de pile ou face oppose " << j1.prenom << " a " << j2.prenom << endl;
-    cout << nomJoueurChoix << "tu as ete choisie, donc a toi de decider de prendre pile ou face" << endl;
+    cout << nomJoueurChoix << " tu as ete choisi(e), donc a toi de decider de prendre pile ou face" << endl;
 
     while ( not (choixJoueur == "pile" || choixJoueur == "face") ) {
         cout << "Pile ou Face " << nomJoueurChoix << " : ";
@@ -51,7 +51,7 @@ joueur& pile_face(joueur& j1, joueur& j2) {
         pasChoixJoueur = "pile";
     }
 
-    cout << nomJoueurChoix << " a choisie " << choixJoueur 
+    cout << nomJoueurChoix << " a choisi " << choixJoueur
     << " donc " << nomJoueurPasChoix << " a " << pasChoixJoueur << endl;
     
     if ( choixJoueur == "pile") {
@@ -98,9 +98,8 @@ joueur& jeu_temporaire(joueur& j1, joueur&)
     return j1;
 }
 
-vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur)
+vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur) // Tri des scores dans l'ordre croissant.
 {
-    // Tri des scores dans l'ordre croissant.
     for (size_t numero_joueur = 0;
          numero_joueur < vecteur_joueur.size();
          ++numero_joueur)
@@ -122,32 +121,24 @@ vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur)
     return vecteur_joueur;
 }
 
-vector<joueur> tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
+void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
 {
-    if (vecteur_joueur.size() < 2)
+    size_t joueurs_restants;
+    while (vecteur_joueur.back().score == vecteur_joueur[vecteur_joueur.size() - 2].score)
     {
-        return vecteur_joueur;
-    }
-
-    tri_joueur_selon_score(vecteur_joueur);
-
-    while (vecteur_joueur.back().score ==
-           vecteur_joueur[vecteur_joueur.size() - 2].score)
-    {
-        size_t joueurs_restants = vecteur_joueur.size();
+        joueurs_restants = vecteur_joueur.size();
         if (jeu_choisi == "pile ou face")
         {
             while (joueurs_restants >= 2)
             {
-                ++pile_face(
-                    vecteur_joueur[joueurs_restants - 1],
-                    vecteur_joueur[joueurs_restants - 2]
-                ).score;
+                    ++pile_face(
+                        vecteur_joueur[joueurs_restants - 1],
+                        vecteur_joueur[joueurs_restants - 2]
+                    ).score;
+                    joueurs_restants -= 2;
 
-                joueurs_restants -= 2;
             }
         }
-
         if (joueurs_restants == 1)
         {
             ++vecteur_joueur[0].score;
@@ -155,8 +146,25 @@ vector<joueur> tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& je
 
         tri_joueur_selon_score(vecteur_joueur);
     }
+}
 
-    return vecteur_joueur;
+
+void tournoi_round_robin(vector<joueur>& vecteur_joueur, string& jeu_choisi)
+{
+    size_t nb_joueur = vecteur_joueur.size();
+    size_t ecart_entre_joueur = 1;
+    if (jeu_choisi == "pile ou face")
+    {
+        while (ecart_entre_joueur < vecteur_joueur.size())
+        {
+            for (size_t indice_joueur = 0; indice_joueur + ecart_entre_joueur< nb_joueur ; ++indice_joueur)
+            {
+                ++pile_face(vecteur_joueur[indice_joueur], vecteur_joueur[indice_joueur + ecart_entre_joueur]).score;
+            }
+            ++ecart_entre_joueur;
+        }
+    }
+    tri_joueur_selon_score(vecteur_joueur);
 }
 
 void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
@@ -165,14 +173,16 @@ void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
          numero_joueur >= 0;
          --numero_joueur)
     {
-        cout << vecteur_joueur[numero_joueur].prenom
-             << " : "
+        cout << vecteur_joueur.size() - numero_joueur
+             << "eme place: "
+             << vecteur_joueur[numero_joueur].prenom
+             << " avec un score de "
              << vecteur_joueur[numero_joueur].score
              << endl;
     }
 }
 
-vector<joueur> creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
+void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
 {
     vecteur_joueur.resize(nb_joueur);
     string nom_joueur;
@@ -185,7 +195,6 @@ vector<joueur> creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_
         joueur_temporaire.score = 0;
         vecteur_joueur[indice_joueur] = joueur_temporaire;
     }
-    return vecteur_joueur;
 }
 
 void tournoi()
@@ -204,36 +213,48 @@ void tournoi()
     size_t nb_joueur;
     cout << endl << "Combien de joueurs il y aura-t-il?" << endl;
     cin >> nb_joueur;
-    vecteur_joueur = creationVecteurJoueur(vecteur_joueur, nb_joueur);
+    creationVecteurJoueur(vecteur_joueur, nb_joueur);
 
-    cout << endl << "Systemes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel systeme voulez-vous utiliser?" << endl << endl;
-    string systeme_choisi = "";
-    getline (cin, systeme_choisi);
-    ToLower(systeme_choisi);
-    while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
+    if (nb_joueur < 2)
     {
-        cout << "Ceci n'est pas un systeme present dans notre systeme" << endl << "Choisissez un systeme present dans la liste de systeme affichee plus haut" << endl << endl;
+        cout << "Il n'y a pas assez de joueurs pour faire un tournoi" << endl;
+    }
+    else
+    {
+        cout << endl << "Systemes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel systeme voulez-vous utiliser?" << endl << endl;
+        string systeme_choisi = "";
         getline (cin, systeme_choisi);
-    }
-
-    if (systeme_choisi == "suisse")
-    {
-        vecteur_joueur = tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
-    }
-    cout << endl << "Podium:" << endl
-         << "1ere place: " << vecteur_joueur[vecteur_joueur.size()-1].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-1].score << endl
-         << "2eme place: " << vecteur_joueur[vecteur_joueur.size()-2].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-2].score << endl
-         << "3eme place: " << vecteur_joueur[vecteur_joueur.size()-3].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-3].score << endl;
-
-    if (nb_joueur > 3)
-    {
-        cout << "Voulez-vous voir le classement complet?" << endl << ">> Oui" << endl << ">> Non" << endl;
-        string reponse;
-        cin >> reponse;
-        ToLower(reponse);
-        if (reponse == "oui")
+        ToLower(systeme_choisi);
+        while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
         {
-            affichageVecteurJoueur(vecteur_joueur);
+            cout << "Ceci n'est pas un systeme present dans notre systeme" << endl << "Choisissez un systeme present dans la liste de systeme affichee plus haut" << endl << endl;
+            getline (cin, systeme_choisi);
+        }
+
+        if (systeme_choisi == "suisse")
+        {
+            tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
+        }
+        if (systeme_choisi == "round robin")
+        {
+            tournoi_round_robin(vecteur_joueur, jeu_choisi);
+        }
+
+        cout << endl << "Podium:" << endl
+             << "1ere place: " << vecteur_joueur[vecteur_joueur.size()-1].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-1].score << endl
+             << "2eme place: " << vecteur_joueur[vecteur_joueur.size()-2].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-2].score << endl
+             << "3eme place: " << vecteur_joueur[vecteur_joueur.size()-3].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-3].score << endl;
+
+        if (nb_joueur > 3)
+        {
+            cout << "Voulez-vous voir le classement complet?" << endl << ">> Oui" << endl << ">> Non" << endl;
+            string reponse;
+            cin >> reponse;
+            ToLower(reponse);
+            if (reponse == "oui")
+            {
+                affichageVecteurJoueur(vecteur_joueur);
+            }
         }
     }
 }
