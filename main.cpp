@@ -321,10 +321,6 @@ void tournoi()
     cin >> nb_joueur;
     creationVecteurJoueur(vecteur_joueur, nb_joueur);
 
-    while(true)
-    {
-        pile_face(vecteur_joueur[0], vecteur_joueur[1]);
-    }
     if (nb_joueur < 2)
     {
         cout << "Il n'y a pas assez de joueurs pour faire un tournoi" << endl;
