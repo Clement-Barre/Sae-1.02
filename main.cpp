@@ -305,16 +305,6 @@ void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
 
 void tournoi()
 {
-    cout << "Jeux:" << endl << ">> Pile ou Face" << endl << ">> Deuxieme jeu" << endl << ">> Troisieme jeu" << endl << endl << "A quel jeu voulez-vous jouer?" << endl << endl;
-    string jeu_choisi = "";
-    getline (cin, jeu_choisi);
-    ToLower(jeu_choisi);
-    while (jeu_choisi != "pile ou face") // Ajouter les autres jeux plus tard avec des &&
-    {
-        cout << "Ceci n'est pas un jeu present dans notre catalogue" << endl << "Choisissez un jeu present dans la liste de jeux affichee plus haut" << endl << endl;
-        getline (cin, jeu_choisi);
-    }
-
     vector<joueur> vecteur_joueur;
     size_t nb_joueur;
     cout << endl << "Combien de joueurs il y aura-t-il?" << endl;
@@ -332,10 +322,22 @@ void tournoi()
         string systeme_choisi = "";
         getline (cin, systeme_choisi);
         ToLower(systeme_choisi);
+
         while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
         {
             cout << "Ceci n'est pas un systeme present dans notre systeme" << endl << "Choisissez un systeme present dans la liste de systeme affichee plus haut" << endl << endl;
             getline (cin, systeme_choisi);
+        }
+
+        cout << "Jeux:" << endl << ">> Pile ou Face" << endl << ">> Deuxieme jeu" << endl << ">> Troisieme jeu" << endl << endl << "A quel jeu voulez-vous jouer?" << endl << endl;
+        string jeu_choisi = "";
+        getline (cin, jeu_choisi);
+        ToLower(jeu_choisi);
+
+        while (jeu_choisi != "pile ou face") // Ajouter les autres jeux plus tard avec des &&
+        {
+            cout << "Ceci n'est pas un jeu present dans notre catalogue" << endl << "Choisissez un jeu present dans la liste de jeux affichee plus haut" << endl << endl;
+            getline (cin, jeu_choisi);
         }
 
         if (systeme_choisi == "suisse")
