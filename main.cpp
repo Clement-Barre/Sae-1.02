@@ -17,6 +17,21 @@ void ToLower(string& chaine) {
     }
 }
 
+void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
+{
+    for (int numero_joueur = vecteur_joueur.size()-1;
+         numero_joueur >= 0;
+         --numero_joueur)
+    {
+        cout << vecteur_joueur.size() - numero_joueur
+             << "eme place: "
+             << vecteur_joueur[numero_joueur].prenom
+             << " avec un score de "
+             << vecteur_joueur[numero_joueur].score
+             << endl;
+    }
+}
+
 joueur& pile_face(joueur& j1, joueur& j2) {
     static mt19937 generateur(random_device{}());
     uniform_int_distribution<int> distribution(0,1);
@@ -198,54 +213,51 @@ void tournoi_double_bracket(vector<joueur>& vecteur_joueur, string& jeu_choisi) 
     vector<joueur> loser_bracket;
     vector<joueur> elimine;
     joueur gagnant;
+    cout << "Declaration des vecteurs" << endl;
     if (jeu_choisi == "pile ou face")
     {
         while (winner_bracket.size() > 1)
         {
-            for (size_t indice_joueur_winner_bracket = 0; indice_joueur_winner_bracket < winner_bracket.size(); indice_joueur_winner_bracket += 2)
+            cout << "winner bracket" << endl;
+            affichageVecteurJoueur(winner_bracket);
+            cout << "loser bracket" << endl;
+            affichageVecteurJoueur(loser_bracket);
+            cout << "elimine" << endl;
+            affichageVecteurJoueur(elimine);
+            for (size_t indice_joueur_winner_bracket = 0; indice_joueur_winner_bracket < winner_bracket.size() - 1; ++indice_joueur_winner_bracket)
             {
-                if (vecteur_joueur.size() - indice_joueur_winner_bracket < 1)
-                {
-                    gagnant = pile_face(vecteur_joueur[indice_joueur_winner_bracket], vecteur_joueur[indice_joueur_winner_bracket+1]);
-                    if (gagnant.prenom == vecteur_joueur[indice_joueur_winner_bracket].prenom && gagnant.score == vecteur_joueur[indice_joueur_winner_bracket].score)
-                    {
-                        ++winner_bracket[indice_joueur_winner_bracket].score;
-                        loser_bracket.push_back(vecteur_joueur[indice_joueur_winner_bracket+1]);
-                        suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket+1);
-                    }
-                    else
-                    {
-                        ++winner_bracket[indice_joueur_winner_bracket+1].score;
-                        loser_bracket.push_back(vecteur_joueur[indice_joueur_winner_bracket]);
-                        suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket);
-                    }
-                }
-                else
+                gagnant = pile_face(winner_bracket[indice_joueur_winner_bracket], winner_bracket[indice_joueur_winner_bracket+1]);
+                if (gagnant.prenom == winner_bracket[indice_joueur_winner_bracket].prenom && gagnant.score == winner_bracket[indice_joueur_winner_bracket].score)
                 {
                     ++winner_bracket[indice_joueur_winner_bracket].score;
-                }
-            }
-            for (size_t indice_joueur_loser_bracket = 0; indice_joueur_loser_bracket < winner_bracket.size(); indice_joueur_loser_bracket += 2)
-            {
-                if (vecteur_joueur.size() - indice_joueur_loser_bracket < 1)
-                {
-                    gagnant = pile_face(vecteur_joueur[indice_joueur_loser_bracket], vecteur_joueur[indice_joueur_loser_bracket+1]);
-                    if ((gagnant.prenom == vecteur_joueur[indice_joueur_loser_bracket].prenom && gagnant.score == vecteur_joueur[indice_joueur_loser_bracket].score))
-                    {
-                        ++loser_bracket[indice_joueur_loser_bracket].score;
-                        elimine.push_back(vecteur_joueur[indice_joueur_loser_bracket+1]);
-                        suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket+1);
-                    }
-                    else
-                    {
-                        ++loser_bracket[indice_joueur_loser_bracket+1].score;
-                        elimine.push_back(vecteur_joueur[indice_joueur_loser_bracket]);
-                        suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket);
-                    }
+                    loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket+1]);
+                    suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket+1);
                 }
                 else
                 {
+                    ++winner_bracket[indice_joueur_winner_bracket+1].score;
+                    loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket]);
+                    suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket);
+                }
+            }
+            if (winner_bracket.size()%2 == 1)
+            {
+                ++winner_bracket.back().score;
+            }
+            for (size_t indice_joueur_loser_bracket = 0; indice_joueur_loser_bracket < loser_bracket.size() - 1; ++indice_joueur_loser_bracket)
+            {
+                gagnant = pile_face(loser_bracket[indice_joueur_loser_bracket], loser_bracket[indice_joueur_loser_bracket+1]);
+                if ((gagnant.prenom == loser_bracket[indice_joueur_loser_bracket].prenom && gagnant.score == loser_bracket[indice_joueur_loser_bracket].score))
+                {
                     ++loser_bracket[indice_joueur_loser_bracket].score;
+                    elimine.push_back(loser_bracket[indice_joueur_loser_bracket+1]);
+                    suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket+1);
+                }
+                else
+                {
+                    ++loser_bracket[indice_joueur_loser_bracket+1].score;
+                    elimine.push_back(loser_bracket[indice_joueur_loser_bracket]);
+                    suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket);
                 }
             }
         }
@@ -274,21 +286,6 @@ void tournoi_double_bracket(vector<joueur>& vecteur_joueur, string& jeu_choisi) 
         vecteur_joueur[2 + indice_elimine] = elimine[indice_elimine];
     }
     vecteur_joueur = tri_joueur_selon_score(vecteur_joueur);
-}
-
-void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
-{
-    for (int numero_joueur = vecteur_joueur.size()-1;
-         numero_joueur >= 0;
-         --numero_joueur)
-    {
-        cout << vecteur_joueur.size() - numero_joueur
-             << "eme place: "
-             << vecteur_joueur[numero_joueur].prenom
-             << " avec un score de "
-             << vecteur_joueur[numero_joueur].score
-             << endl;
-    }
 }
 
 void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
@@ -324,10 +321,15 @@ void tournoi()
     cin >> nb_joueur;
     creationVecteurJoueur(vecteur_joueur, nb_joueur);
 
+    while(true)
+    {
+        pile_face(vecteur_joueur[0], vecteur_joueur[1]);
+    }
     if (nb_joueur < 2)
     {
         cout << "Il n'y a pas assez de joueurs pour faire un tournoi" << endl;
     }
+
     else
     {
         cout << endl << "Systemes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel systeme voulez-vous utiliser?" << endl << endl;
@@ -394,7 +396,6 @@ int main()
     // tournoi_systeme_suisse(vecteur_joueur);
 
     // affichageVecteurJoueur(vecteur_joueur);
-
     tournoi();
 
     return 0;
