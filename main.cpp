@@ -32,7 +32,7 @@ void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
     }
 }
 
-joueur& pile_face(joueur& j1, joueur& j2) {
+joueur& pile_face_ancien (joueur& j1, joueur& j2) {
     static mt19937 generateur(random_device{}());
     uniform_int_distribution<int> distribution(0,1);
 
@@ -109,10 +109,48 @@ joueur& pile_face(joueur& j1, joueur& j2) {
 }
 
 // Fonction pierre feuille ciseaux (Si quelqu'un veut la faire sentez-vous libre de le faire, sinon je (Aaron) la ferai si personne ne veut la faire
-// joueur pierre_feuille_ciseaux (joueur j1, joueur j2)
-//{
+joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
+    string choixJ1, choixJ2;
+    cout << "Joueur 1 choisissez un coup : ";
+    cin >> choixJ1;
+    cout << "Joueur 2 choisissez un coup : ";
+    cin >> choixJ2;
+    if ( (choixJ1 == "Pierre") && (choixJ2 == "Feuille")) return j2;
+    else if ( (choixJ1 == "Pierre") && (choixJ2 == "Ciseau")) return j1;
+    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Pierre")) return j1;
+    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Ciseaux")) return j2;
+    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Pierre")) return j2;
+    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Feuille")) return j1;
+    else if (choixJ1 == choixJ2) {
+        cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
+        return j1;
+    }
+}
 
-//}
+// Pile ou Face truqué
+joueur pile_face_triche (const joueur & j1, const joueur & j2) {
+    cout << "Le gagnant de ce pile ou face est le joueur 1, c'est absolument pas truqué promis";
+    return j1;
+}
+
+// Pile ou face normal
+joueur pile_face (const joueur & j1, const joueur & j2) {
+    // Ajouter la partie avec le choix pseudo aléatoire
+    unsigned seed = 1234567890; //Mettre la seed
+    static mt19937 generateur(seed);
+    uniform_int_distribution<int> distribution(0,1);
+    unsigned choixNombreRandom = 0;
+    cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
+    if (choixNombreRandom == 0) {
+        cout << "Pile, j1 gagne !" << endl;
+        return j1;
+    }
+    else {
+        cout << "Face, j2 gagne !" << endl;
+        return j2;
+    }
+}
+
 
 joueur& jeu_temporaire(joueur& j1, joueur&)
 {
