@@ -184,8 +184,8 @@ joueur& jeu_temporaire(joueur& j1, joueur&)
 
 joueur manche (joueur& j1, joueur& j2)
 {
-    short victoires_j1;
-    short victoires_j2;
+    short victoires_j1 = 0;
+    short victoires_j2 = 0;
     joueur gagnant;
     gagnant = pile_face(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
@@ -253,14 +253,17 @@ void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, short in
 void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueur& gagnant)
 {
     vector<joueur> vecteur_resultat;
+    joueur joueur_a_incrementer;
     bool deja_incremente = false;
     for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
     {
         if (deja_incremente == false && vecteur_joueur[indice].prenom == gagnant.prenom && vecteur_joueur[indice].score == gagnant.score)
+        {
             joueur_a_incrementer = gagnant;
             ++joueur_a_incrementer.score;
             vecteur_resultat.push_back(joueur_a_incrementer);
             deja_incremente = true;
+        }
         else
             vecteur_resultat.push_back(vecteur_joueur[indice]);
     }
@@ -269,7 +272,8 @@ void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueu
 
 void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
 {
-    size_t joueurs_restants;
+    short joueurs_restants;
+    joueur gagnant;
     while (vecteur_joueur.back().score == vecteur_joueur[vecteur_joueur.size() - 2].score)
     {
         joueurs_restants = vecteur_joueur.size();
@@ -277,11 +281,8 @@ void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
         {
             while (joueurs_restants >= 2)
             {
-                ++manche(
-                    vecteur_joueur[joueurs_restants - 1],
-                    vecteur_joueur[joueurs_restants - 2]
-                ).score;
-                incrementation_element_vecteur_joueur(vecteur_joueur, manche(vecteur_joueur[joueurs_restants - 1], vecteur_joueur[joueurs_restants - 2]));
+                gagnant = manche(vecteur_joueur[joueurs_restants - 1], vecteur_joueur[joueurs_restants - 2]);
+                incrementation_element_vecteur_joueur(vecteur_joueur, gagnant);
                 joueurs_restants -= 2;
             }
         }
@@ -296,15 +297,17 @@ void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
 
 void tournoi_round_robin(vector<joueur>& vecteur_joueur, string& jeu_choisi)
 {
-    size_t nb_joueur = vecteur_joueur.size();
-    size_t ecart_entre_joueur = 1;
+    short nb_joueur = vecteur_joueur.size();
+    short ecart_entre_joueur = 1;
+    joueur gagnant;
     if (jeu_choisi == "pile ou face")
     {
         while (ecart_entre_joueur < vecteur_joueur.size())
         {
-            for (size_t indice_joueur = 0; indice_joueur + ecart_entre_joueur< nb_joueur ; ++indice_joueur)
+            for (short indice_joueur (0); indice_joueur + ecart_entre_joueur< nb_joueur ; ++indice_joueur)
             {
-                ++pile_face(vecteur_joueur[indice_joueur], vecteur_joueur[indice_joueur + ecart_entre_joueur]).score;
+                gagnant = manche(vecteur_joueur[indice_joueur], vecteur_joueur[indice_joueur + ecart_entre_joueur]);
+                incrementation_element_vecteur_joueur(vecteur_joueur, gagnant);
             }
             ++ecart_entre_joueur;
         }
