@@ -115,6 +115,14 @@ joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
     cin >> choixJ1;
     cout << "Joueur 2 choisissez un coup : ";
     cin >> choixJ2;
+    //spéciaux
+    if ( (choixJ1 == "Volcan") && (choixJ2 == "Pluie")) return j2;
+    else if ( (choixJ1 == "Volcan") && (choixJ2 == "Escargot")) return j1;
+    else if ( (choixJ1 == "Pluie") && (choixJ2 == "Volcan")) return j1;
+    else if ( (choixJ1 == "Pluie") && (choixJ2 == "Escargot")) return j2;
+    else if ( (choixJ1 == "Escargot") && (choixJ2 == "Volcan")) return j2;
+    else if ( (choixJ1 == "Escargot") && (choixJ2 == "Pluie")) return j1;
+    //normaux
     if ( (choixJ1 == "Pierre") && (choixJ2 == "Feuille")) return j2;
     else if ( (choixJ1 == "Pierre") && (choixJ2 == "Ciseau")) return j1;
     else if ( (choixJ1 == "Feuille") && (choixJ2 == "Pierre")) return j1;
@@ -153,7 +161,7 @@ joueur pile_face (const joueur & j1, const joueur & j2) {
 
 //Pile ou face ou tranche
 joueur pile_face_tranche (const joueur & j1, const joueur & j2) {
-    string choixj1, choixj2;
+    string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez entre pile, face et tranche: ";
     cin >> choixJ1;
     cout << "Joueur 2 choisissez entre pile, face et tranche : ";
