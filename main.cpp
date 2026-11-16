@@ -7,9 +7,8 @@ using namespace std;
 
 struct joueur {
     string prenom;
-    unsigned score;
+    short score;
 };
-
 
 void ToLower(string& chaine) {
     for (size_t i = 0; i < chaine.size(); ++i) {
@@ -109,7 +108,7 @@ joueur& pile_face_ancien (joueur& j1, joueur& j2) {
 }
 
 // Fonction pierre feuille ciseaux (Si quelqu'un veut la faire sentez-vous libre de le faire, sinon je (Aaron) la ferai si personne ne veut la faire
-joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
+joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
     string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez un coup : ";
     cin >> choixJ1;
@@ -136,13 +135,13 @@ joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
 }
 
 // Pile ou Face truqué
-joueur pile_face_triche (const joueur & j1, const joueur & j2) {
+joueur pile_face_triche (joueur & j1, joueur & j2) {
     cout << "Le gagnant de ce pile ou face est le joueur 1, c'est absolument pas truqué promis";
     return j1;
 }
 
 // Pile ou face normal
-joueur pile_face (const joueur & j1, const joueur & j2) {
+joueur pile_face (joueur & j1, joueur & j2) {
     // Ajouter la partie avec le choix pseudo aléatoire
     unsigned seed = 1234567890; //Mettre la seed
     static mt19937 generateur(seed);
@@ -160,7 +159,7 @@ joueur pile_face (const joueur & j1, const joueur & j2) {
 }
 
 //Pile ou face ou tranche
-joueur pile_face_tranche (const joueur & j1, const joueur & j2) {
+joueur pile_face_tranche (joueur & j1, joueur & j2) {
     string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez entre pile, face et tranche: ";
     cin >> choixJ1;
@@ -183,6 +182,33 @@ joueur& jeu_temporaire(joueur& j1, joueur&)
     return j1;
 }
 
+joueur manche (joueur& j1, joueur& j2)
+{
+    short victoires_j1;
+    short victoires_j2;
+    joueur gagnant;
+    gagnant = pile_face(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        ++victoires_j1;
+    else
+        ++victoires_j2;
+    gagnant = pierre_feuille_ciseaux(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        ++victoires_j1;
+    else
+        ++victoires_j2;
+    if (victoires_j1 > 1 || victoires_j2 > 1)
+    {
+        if (victoires_j1 > victoires_j2)
+            return j1;
+        return j2;
+    }
+    gagnant = pile_face_tranche(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        return j1;
+    return j2;
+}
+
 vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur) // Tri des scores dans l'ordre croissant.
 {
     for (size_t numero_joueur = 0;
@@ -202,16 +228,15 @@ vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur) // Tri des
             --position;
         }
     }
-
     return vecteur_joueur;
 }
 
-void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, size_t indice_element)
+void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, short indice_element)
 {
     vector<joueur> vecteur_resultat;
     joueur element = vecteur_joueur[indice_element];
     bool deja_supprime = false;
-    for (size_t indice = 0; indice < vecteur_joueur.size(); ++indice)
+    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
     {
         if (deja_supprime == false && vecteur_joueur[indice].prenom == element.prenom && vecteur_joueur[indice].score == element.score)
         {
@@ -221,6 +246,23 @@ void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, size_t i
         {
             vecteur_resultat.push_back(vecteur_joueur[indice]);
         }
+    }
+    vecteur_joueur = vecteur_resultat;
+}
+
+void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueur& gagnant)
+{
+    vector<joueur> vecteur_resultat;
+    bool deja_incremente = false;
+    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
+    {
+        if (deja_incremente == false && vecteur_joueur[indice].prenom == gagnant.prenom && vecteur_joueur[indice].score == gagnant.score)
+            joueur_a_incrementer = gagnant;
+            ++joueur_a_incrementer.score;
+            vecteur_resultat.push_back(joueur_a_incrementer);
+            deja_incremente = true;
+        else
+            vecteur_resultat.push_back(vecteur_joueur[indice]);
     }
     vecteur_joueur = vecteur_resultat;
 }
@@ -235,12 +277,12 @@ void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
         {
             while (joueurs_restants >= 2)
             {
-                    ++pile_face(
-                        vecteur_joueur[joueurs_restants - 1],
-                        vecteur_joueur[joueurs_restants - 2]
-                    ).score;
-                    joueurs_restants -= 2;
-
+                ++manche(
+                    vecteur_joueur[joueurs_restants - 1],
+                    vecteur_joueur[joueurs_restants - 2]
+                ).score;
+                incrementation_element_vecteur_joueur(vecteur_joueur, manche(vecteur_joueur[joueurs_restants - 1], vecteur_joueur[joueurs_restants - 2]));
+                joueurs_restants -= 2;
             }
         }
         if (joueurs_restants == 1)
@@ -251,7 +293,6 @@ void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, string& jeu_choisi)
         tri_joueur_selon_score(vecteur_joueur);
     }
 }
-
 
 void tournoi_round_robin(vector<joueur>& vecteur_joueur, string& jeu_choisi)
 {

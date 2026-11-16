@@ -241,6 +241,10 @@ void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
     }
 }
 
+void manche (joueur& j1, joueur& j2)
+{
+
+}
 void tournoi()
 {
     vector<joueur> vecteur_joueur;
@@ -279,13 +283,9 @@ void tournoi()
         }
 
         if (systeme_choisi == "suisse")
-        {
             tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
-        }
         if (systeme_choisi == "round robin")
-        {
             tournoi_round_robin(vecteur_joueur, jeu_choisi);
-        }
         if (systeme_choisi == "double bracket")
         {
             tournoi_double_bracket(vecteur_joueur, jeu_choisi);
