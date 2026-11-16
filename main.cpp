@@ -151,6 +151,24 @@ joueur pile_face (const joueur & j1, const joueur & j2) {
     }
 }
 
+//Pile ou face ou tranche
+joueur pile_face_tranche (const joueur & j1, const joueur & j2) {
+    string choixj1, choixj2;
+    cout << "Joueur 1 choisissez entre pile, face et tranche: ";
+    cin >> choixJ1;
+    cout << "Joueur 2 choisissez entre pile, face et tranche : ";
+    cin >> choixJ2;
+    if ( (choixJ1 == "Pile") && (choixJ2 == "Tranche")) return j2;
+    else if ( (choixJ1 == "Pile") && (choixJ2 == "Face")) return j1;
+    else if ( (choixJ1 == "Tranche") && (choixJ2 == "Pile")) return j1;
+    else if ( (choixJ1 == "Tranche") && (choixJ2 == "Face")) return j2;
+    else if ( (choixJ1 == "Face") && (choixJ2 == "Pile")) return j2;
+    else if ( (choixJ1 == "Face") && (choixJ2 == "Tranche")) return j1;
+    else if (choixJ1 == choixJ2) {
+        cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
+        return j1;
+    }
+}
 
 joueur& jeu_temporaire(joueur& j1, joueur&)
 {
