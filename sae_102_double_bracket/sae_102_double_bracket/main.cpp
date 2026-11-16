@@ -301,9 +301,7 @@ void tournoi_double_bracket(vector<joueur>& vecteur_joueur)
             }
         }
         if (winner_bracket.size()%2 == 1)
-        {
             ++winner_bracket.back().score;
-        }
         for (size_t indice_joueur_loser_bracket = 0; indice_joueur_loser_bracket < loser_bracket.size() - 1; ++indice_joueur_loser_bracket)
         {
             gagnant = manche(loser_bracket[indice_joueur_loser_bracket], loser_bracket[indice_joueur_loser_bracket+1]);
@@ -326,24 +324,16 @@ void tournoi_double_bracket(vector<joueur>& vecteur_joueur)
     {
         gagnant = manche(winner_bracket[0], loser_bracket[0]);
         if (gagnant.prenom == winner_bracket[0].prenom && gagnant.score == winner_bracket[0].score)
-        {
             ++winner_bracket[0].score;
-        }
         else
-        {
             ++loser_bracket[0].score;
-        }
     }
     else
-    {
         ++winner_bracket[0].score;
-    }
     vecteur_joueur[0] = winner_bracket[0];
     vecteur_joueur[1] = loser_bracket[0];
     for (size_t indice_elimine = 0; indice_elimine < elimine.size(); ++ indice_elimine)
-    {
         vecteur_joueur[2 + indice_elimine] = elimine[indice_elimine];
-    }
     vecteur_joueur = tri_joueur_selon_score(vecteur_joueur);
 }
 
