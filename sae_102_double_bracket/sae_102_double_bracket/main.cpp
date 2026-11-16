@@ -7,9 +7,8 @@ using namespace std;
 
 struct joueur {
     string prenom;
-    unsigned score;
+    short score;
 };
-
 
 void ToLower(string& chaine) {
     for (size_t i = 0; i < chaine.size(); ++i) {
@@ -109,18 +108,28 @@ joueur& pile_face_ancien (joueur& j1, joueur& j2) {
 }
 
 // Fonction pierre feuille ciseaux (Si quelqu'un veut la faire sentez-vous libre de le faire, sinon je (Aaron) la ferai si personne ne veut la faire
-joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
+joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
     string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez un coup : ";
     cin >> choixJ1;
     cout << "Joueur 2 choisissez un coup : ";
     cin >> choixJ2;
-    if ( (choixJ1 == "Pierre") && (choixJ2 == "Feuille")) return j2;
-    else if ( (choixJ1 == "Pierre") && (choixJ2 == "Ciseau")) return j1;
-    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Pierre")) return j1;
-    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Ciseaux")) return j2;
-    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Pierre")) return j2;
-    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Feuille")) return j1;
+    ToLower(choixJ1);
+    ToLower(choixJ2);
+    //spéciaux
+    if ( (choixJ1 == "volcan") && (choixJ2 == "pluie")) return j2;
+    else if ( (choixJ1 == "volcan") && (choixJ2 == "escargot")) return j1;
+    else if ( (choixJ1 == "pluie") && (choixJ2 == "volcan")) return j1;
+    else if ( (choixJ1 == "pluie") && (choixJ2 == "escargot")) return j2;
+    else if ( (choixJ1 == "escargot") && (choixJ2 == "volcan")) return j2;
+    else if ( (choixJ1 == "escargot") && (choixJ2 == "pluie")) return j1;
+    //normaux
+    if ( (choixJ1 == "pierre") && (choixJ2 == "feuille")) return j2;
+    else if ( (choixJ1 == "pierre") && (choixJ2 == "ciseaux")) return j1;
+    else if ( (choixJ1 == "feuille") && (choixJ2 == "pierre")) return j1;
+    else if ( (choixJ1 == "feuille") && (choixJ2 == "ciseaux")) return j2;
+    else if ( (choixJ1 == "ciseaux") && (choixJ2 == "pierre")) return j2;
+    else if ( (choixJ1 == "ciseaux") && (choixJ2 == "feuille")) return j1;
     else if (choixJ1 == choixJ2) {
         cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
         return j1;
@@ -128,18 +137,18 @@ joueur pierre_feuille_ciseaux (const joueur & j1, const joueur & j2) {
 }
 
 // Pile ou Face truqué
-joueur pile_face_triche (const joueur & j1, const joueur & j2) {
+joueur pile_face_triche (joueur & j1, joueur & j2) {
     cout << "Le gagnant de ce pile ou face est le joueur 1, c'est absolument pas truqué promis";
     return j1;
 }
 
 // Pile ou face normal
-joueur pile_face (const joueur & j1, const joueur & j2) {
+joueur pile_face (joueur & j1, joueur & j2) {
     // Ajouter la partie avec le choix pseudo aléatoire
     unsigned seed = 1234567890; //Mettre la seed
     static mt19937 generateur(seed);
     uniform_int_distribution<int> distribution(0,1);
-    unsigned choixNombreRandom = 0;
+    unsigned choixNombreRandom = distribution(generateur);
     cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
     if (choixNombreRandom == 0) {
         cout << "Pile, j1 gagne !" << endl;
@@ -151,10 +160,59 @@ joueur pile_face (const joueur & j1, const joueur & j2) {
     }
 }
 
+//Pile ou face ou tranche
+joueur pile_face_tranche (joueur & j1, joueur & j2) {
+    string choixJ1, choixJ2;
+    cout << "Joueur 1 choisissez entre pile, face et tranche: ";
+    cin >> choixJ1;
+    cout << "Joueur 2 choisissez entre pile, face et tranche : ";
+    cin >> choixJ2;
+    ToLower(choixJ1);
+    ToLower(choixJ2);
+    if ( (choixJ1 == "pile") && (choixJ2 == "tranche")) return j2;
+    else if ( (choixJ1 == "pile") && (choixJ2 == "face")) return j1;
+    else if ( (choixJ1 == "tranche") && (choixJ2 == "pile")) return j1;
+    else if ( (choixJ1 == "tranche") && (choixJ2 == "face")) return j2;
+    else if ( (choixJ1 == "face") && (choixJ2 == "pile")) return j2;
+    else if ( (choixJ1 == "face") && (choixJ2 == "tranche")) return j1;
+    else if (choixJ1 == choixJ2) {
+        cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
+        return j1;
+    }
+}
 
 joueur& jeu_temporaire(joueur& j1, joueur&)
 {
     return j1;
+}
+
+joueur manche (joueur& j1, joueur& j2)
+{
+    short victoires_j1 = 0;
+    short victoires_j2 = 0;
+    joueur gagnant;
+    gagnant = pile_face(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        ++victoires_j1;
+    else
+        ++victoires_j2;
+    cout << "Pierre feuille ciseaux entre " << j1.prenom << " et " << j2.prenom << endl;
+    gagnant = pierre_feuille_ciseaux(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        ++victoires_j1;
+    else
+        ++victoires_j2;
+    if (victoires_j1 > 1 || victoires_j2 > 1)
+    {
+        if (victoires_j1 > victoires_j2)
+            return j1;
+        return j2;
+    }
+    cout << "Pile face tranche entre " << j1.prenom << " et " << j2.prenom << endl;
+    gagnant = pile_face_tranche(j1, j2);
+    if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
+        return j1;
+    return j2;
 }
 
 vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur) // Tri des scores dans l'ordre croissant.
@@ -176,16 +234,15 @@ vector<joueur> tri_joueur_selon_score(vector<joueur>& vecteur_joueur) // Tri des
             --position;
         }
     }
-
     return vecteur_joueur;
 }
 
-void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, size_t indice_element)
+void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, short indice_element)
 {
     vector<joueur> vecteur_resultat;
     joueur element = vecteur_joueur[indice_element];
     bool deja_supprime = false;
-    for (size_t indice = 0; indice < vecteur_joueur.size(); ++indice)
+    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
     {
         if (deja_supprime == false && vecteur_joueur[indice].prenom == element.prenom && vecteur_joueur[indice].score == element.score)
         {
@@ -199,77 +256,87 @@ void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, size_t i
     vecteur_joueur = vecteur_resultat;
 }
 
-void tournoi_double_bracket(vector<joueur>& vecteur_joueur, string& jeu_choisi) // Remplacer vecteur.erase() par une fonction faite main
+void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueur& gagnant)
+{
+    vector<joueur> vecteur_resultat;
+    joueur joueur_a_incrementer;
+    bool deja_incremente = false;
+    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
+    {
+        if (deja_incremente == false && vecteur_joueur[indice].prenom == gagnant.prenom && vecteur_joueur[indice].score == gagnant.score)
+        {
+            joueur_a_incrementer = gagnant;
+            ++joueur_a_incrementer.score;
+            vecteur_resultat.push_back(joueur_a_incrementer);
+            deja_incremente = true;
+        }
+        else
+            vecteur_resultat.push_back(vecteur_joueur[indice]);
+    }
+    vecteur_joueur = vecteur_resultat;
+}
+
+void tournoi_double_bracket(vector<joueur>& vecteur_joueur)
 {
     vector<joueur> winner_bracket = vecteur_joueur;
     vector<joueur> loser_bracket;
     vector<joueur> elimine;
     joueur gagnant;
-    cout << "Declaration des vecteurs" << endl;
-    if (jeu_choisi == "pile ou face")
+    while (winner_bracket.size() > 1)
     {
-        while (winner_bracket.size() > 1)
+        for (size_t indice_joueur_winner_bracket = 0; indice_joueur_winner_bracket < winner_bracket.size() - 1; ++indice_joueur_winner_bracket)
         {
-            cout << "winner bracket" << endl;
-            affichageVecteurJoueur(winner_bracket);
-            cout << "loser bracket" << endl;
-            affichageVecteurJoueur(loser_bracket);
-            cout << "elimine" << endl;
-            affichageVecteurJoueur(elimine);
-            for (size_t indice_joueur_winner_bracket = 0; indice_joueur_winner_bracket < winner_bracket.size() - 1; ++indice_joueur_winner_bracket)
+            gagnant = manche(winner_bracket[indice_joueur_winner_bracket], winner_bracket[indice_joueur_winner_bracket+1]);
+            if (gagnant.prenom == winner_bracket[indice_joueur_winner_bracket].prenom && gagnant.score == winner_bracket[indice_joueur_winner_bracket].score)
             {
-                gagnant = pile_face(winner_bracket[indice_joueur_winner_bracket], winner_bracket[indice_joueur_winner_bracket+1]);
-                if (gagnant.prenom == winner_bracket[indice_joueur_winner_bracket].prenom && gagnant.score == winner_bracket[indice_joueur_winner_bracket].score)
-                {
-                    ++winner_bracket[indice_joueur_winner_bracket].score;
-                    loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket+1]);
-                    suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket+1);
-                }
-                else
-                {
-                    ++winner_bracket[indice_joueur_winner_bracket+1].score;
-                    loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket]);
-                    suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket);
-                }
-            }
-            if (winner_bracket.size()%2 == 1)
-            {
-                ++winner_bracket.back().score;
-            }
-            for (size_t indice_joueur_loser_bracket = 0; indice_joueur_loser_bracket < loser_bracket.size() - 1; ++indice_joueur_loser_bracket)
-            {
-                gagnant = pile_face(loser_bracket[indice_joueur_loser_bracket], loser_bracket[indice_joueur_loser_bracket+1]);
-                if ((gagnant.prenom == loser_bracket[indice_joueur_loser_bracket].prenom && gagnant.score == loser_bracket[indice_joueur_loser_bracket].score))
-                {
-                    ++loser_bracket[indice_joueur_loser_bracket].score;
-                    elimine.push_back(loser_bracket[indice_joueur_loser_bracket+1]);
-                    suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket+1);
-                }
-                else
-                {
-                    ++loser_bracket[indice_joueur_loser_bracket+1].score;
-                    elimine.push_back(loser_bracket[indice_joueur_loser_bracket]);
-                    suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket);
-                }
-            }
-        }
-        gagnant = pile_face(winner_bracket[0], loser_bracket[0]);
-        if (gagnant.prenom == loser_bracket[0].prenom && gagnant.score == loser_bracket[0].score)
-        {
-            gagnant = pile_face(winner_bracket[0], loser_bracket[0]);
-            if (gagnant.prenom == winner_bracket[0].prenom && gagnant.score == winner_bracket[0].score)
-            {
-                ++winner_bracket[0].score;
+                ++winner_bracket[indice_joueur_winner_bracket].score;
+                loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket+1]);
+                suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket+1);
             }
             else
             {
-                ++loser_bracket[0].score;
+                ++winner_bracket[indice_joueur_winner_bracket+1].score;
+                loser_bracket.push_back(winner_bracket[indice_joueur_winner_bracket]);
+                suppression_element_vecteur_joueur(winner_bracket, indice_joueur_winner_bracket);
             }
         }
-        else
+        if (winner_bracket.size()%2 == 1)
+        {
+            ++winner_bracket.back().score;
+        }
+        for (size_t indice_joueur_loser_bracket = 0; indice_joueur_loser_bracket < loser_bracket.size() - 1; ++indice_joueur_loser_bracket)
+        {
+            gagnant = manche(loser_bracket[indice_joueur_loser_bracket], loser_bracket[indice_joueur_loser_bracket+1]);
+            if ((gagnant.prenom == loser_bracket[indice_joueur_loser_bracket].prenom && gagnant.score == loser_bracket[indice_joueur_loser_bracket].score))
+            {
+                ++loser_bracket[indice_joueur_loser_bracket].score;
+                elimine.push_back(loser_bracket[indice_joueur_loser_bracket+1]);
+                suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket+1);
+            }
+            else
+            {
+                ++loser_bracket[indice_joueur_loser_bracket+1].score;
+                elimine.push_back(loser_bracket[indice_joueur_loser_bracket]);
+                suppression_element_vecteur_joueur(loser_bracket, indice_joueur_loser_bracket);
+            }
+        }
+    }
+    gagnant = manche(winner_bracket[0], loser_bracket[0]);
+    if (gagnant.prenom == loser_bracket[0].prenom && gagnant.score == loser_bracket[0].score)
+    {
+        gagnant = manche(winner_bracket[0], loser_bracket[0]);
+        if (gagnant.prenom == winner_bracket[0].prenom && gagnant.score == winner_bracket[0].score)
         {
             ++winner_bracket[0].score;
         }
+        else
+        {
+            ++loser_bracket[0].score;
+        }
+    }
+    else
+    {
+        ++winner_bracket[0].score;
     }
     vecteur_joueur[0] = winner_bracket[0];
     vecteur_joueur[1] = loser_bracket[0];
@@ -280,13 +347,12 @@ void tournoi_double_bracket(vector<joueur>& vecteur_joueur, string& jeu_choisi) 
     vecteur_joueur = tri_joueur_selon_score(vecteur_joueur);
 }
 
-void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
+void creationVecteurJoueur(vector<joueur>& vecteur_joueur, short& nb_joueur)
 {
     vecteur_joueur.resize(nb_joueur);
     string nom_joueur;
     for (size_t indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
     {
-        cout << "Quel est le nom du joueur numero " << indice_joueur+1 << " ?" << endl;
         cin >> nom_joueur;
         joueur joueur_temporaire;
         joueur_temporaire.prenom = nom_joueur;
@@ -295,98 +361,13 @@ void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
     }
 }
 
-void tournoi()
-{
-    vector<joueur> vecteur_joueur;
-    size_t nb_joueur;
-    cout << endl << "Combien de joueurs il y aura-t-il?" << endl;
-    cin >> nb_joueur;
-    creationVecteurJoueur(vecteur_joueur, nb_joueur);
-
-    if (nb_joueur < 2)
-    {
-        cout << "Il n'y a pas assez de joueurs pour faire un tournoi" << endl;
-    }
-
-    else
-    {
-        cout << endl << "Systemes de tournoi:" << endl << ">> Suisse" << endl << ">> Round Robin" << endl << ">> Double Bracket" << endl << endl << "Quel systeme voulez-vous utiliser?" << endl << endl;
-        string systeme_choisi = "";
-        getline (cin, systeme_choisi);
-        ToLower(systeme_choisi);
-
-        while (systeme_choisi != "suisse" && systeme_choisi != "round robin" && systeme_choisi != "double bracket")
-        {
-            cout << "Ceci n'est pas un systeme present dans notre systeme" << endl << "Choisissez un systeme present dans la liste de systeme affichee plus haut" << endl << endl;
-            getline (cin, systeme_choisi);
-        }
-
-        cout << "Jeux:" << endl << ">> Pile ou Face" << endl << ">> Deuxieme jeu" << endl << ">> Troisieme jeu" << endl << endl << "A quel jeu voulez-vous jouer?" << endl << endl;
-        string jeu_choisi = "";
-        getline (cin, jeu_choisi);
-        ToLower(jeu_choisi);
-
-        while (jeu_choisi != "pile ou face") // Ajouter les autres jeux plus tard avec des &&
-        {
-            cout << "Ceci n'est pas un jeu present dans notre catalogue" << endl << "Choisissez un jeu present dans la liste de jeux affichee plus haut" << endl << endl;
-            getline (cin, jeu_choisi);
-        }
-
-        if (systeme_choisi == "suisse")
-        {
-            tournoi_systeme_suisse(vecteur_joueur, jeu_choisi);
-        }
-        if (systeme_choisi == "round robin")
-        {
-            tournoi_round_robin(vecteur_joueur, jeu_choisi);
-        }
-        if (systeme_choisi == "double bracket")
-        {
-            tournoi_double_bracket(vecteur_joueur, jeu_choisi);
-        }
-
-        cout << endl << "Podium:" << endl
-             << "1ere place: " << vecteur_joueur[vecteur_joueur.size()-1].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-1].score << endl
-             << "2eme place: " << vecteur_joueur[vecteur_joueur.size()-2].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-2].score << endl
-             << "3eme place: " << vecteur_joueur[vecteur_joueur.size()-3].prenom << " avec un score de " << vecteur_joueur[vecteur_joueur.size()-3].score << endl;
-
-        if (nb_joueur > 3)
-        {
-            cout << "Voulez-vous voir le classement complet?" << endl << ">> Oui" << endl << ">> Non" << endl;
-            string reponse;
-            cin >> reponse;
-            ToLower(reponse);
-            if (reponse == "oui")
-            {
-                affichageVecteurJoueur(vecteur_joueur);
-            }
-        }
-    }
-}
-
 int main()
 {
-    // vector<joueur> vecteur_joueur = {
-    //     {"Aaron", 1},
-    //     {"Clement", 1},
-    //     {"Jonathan", 1},
-    // };
-
-
-    //tri_joueur_selon_score(vecteur_joueur);
-
-    // string test = "TEST";
-    // ToLower(test);
-    // cout << test << endl;
-
-    // cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
-    // pile_face(vecteur_joueur[1], vecteur_joueur[2]).score += 1;
-    // cout << vecteur_joueur[1].score << " " << vecteur_joueur[2].score << endl;
-
-    // tournoi_systeme_suisse(vecteur_joueur);
-
-    // affichageVecteurJoueur(vecteur_joueur);
-    tournoi();
-
+    short nb_joueurs;
+    cin >> nb_joueurs;
+    vector<joueur> vecteur_joueur;
+    creationVecteurJoueur(vecteur_joueur, nb_joueurs);
+    tournoi_double_bracket(vecteur_joueur);
+    cout << vecteur_joueur.back().prenom << endl;
     return 0;
 }
