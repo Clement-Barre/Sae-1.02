@@ -16,6 +16,39 @@ void ToLower(string& chaine) {
     }
 }
 
+string flux_cin_string () // Fonction que M. Casali a donne dans la SAE s102 de l'annee 2025/2026 (etudiee en TP). La syntaxe est legerement modifiee afin de montrer la comprehension de la fonction donnee.
+{
+    string la_string;
+    while (true)
+    {
+        getline(cin, la_string);
+        if ((!cin) || (la_string.substr(0,2) != "//")) break;
+    }
+    return la_string;
+}
+
+int flux_cin_entier () // Fonction que M. Casali a donne dans la SAE s102 de l'annee 2025/2026 (etudiee en TP). La syntaxe est legerement modifiee afin de montrer la comprehension de la fonction donnee.
+{
+    string la_string_contenant_l_entier;
+    while (true)
+    {
+        getline (cin, la_string_contenant_l_entier);
+        if ((!cin) || (la_string_contenant_l_entier.substr(0,2) != "//")) break;
+    }
+    return stoi(la_string_contenant_l_entier);
+}
+
+int lecture_seed() // Renvoie l'entier present apres "seed:"
+{
+    string seed_str;
+    while (true)
+    {
+        getline (cin, seed_str);
+        if ((!cin) || (seed_str.substr(0,2) != "//")) break;
+    }
+    return stoi(seed_str.substr (5,seed_str.size()));
+}
+
 void affichageVecteurJoueur(vector<joueur>& vecteur_joueur)
 {
     for (int numero_joueur = vecteur_joueur.size()-1;
@@ -107,29 +140,29 @@ joueur& pile_face_ancien (joueur& j1, joueur& j2) {
     }
 }
 
-// Fonction pierre feuille ciseaux (Si quelqu'un veut la faire sentez-vous libre de le faire, sinon je (Aaron) la ferai si personne ne veut la faire
 joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
-    string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez un coup : ";
-    cin >> choixJ1;
+    string choixJ1 (flux_cin_string());
     cout << "Joueur 2 choisissez un coup : ";
-    cin >> choixJ2;
+    string choixJ2 (flux_cin_string());
+    ToLower(choixJ1);
+    ToLower(choixJ2);
     //spéciaux
-    if ( (choixJ1 == "Volcan") && (choixJ2 == "Pluie")) return j2;
-    else if ( (choixJ1 == "Volcan") && (choixJ2 == "Escargot")) return j1;
-    else if ( (choixJ1 == "Pluie") && (choixJ2 == "Volcan")) return j1;
-    else if ( (choixJ1 == "Pluie") && (choixJ2 == "Escargot")) return j2;
-    else if ( (choixJ1 == "Escargot") && (choixJ2 == "Volcan")) return j2;
-    else if ( (choixJ1 == "Escargot") && (choixJ2 == "Pluie")) return j1;
+    if ( (choixJ1 == "volcan") && (choixJ2 == "pluie")) return j2;
+    else if ( (choixJ1 == "volcan") && (choixJ2 == "escargot")) return j1;
+    else if ( (choixJ1 == "pluie") && (choixJ2 == "volcan")) return j1;
+    else if ( (choixJ1 == "pluie") && (choixJ2 == "escargot")) return j2;
+    else if ( (choixJ1 == "escargot") && (choixJ2 == "volcan")) return j2;
+    else if ( (choixJ1 == "escargot") && (choixJ2 == "pluie")) return j1;
     //normaux
-    if ( (choixJ1 == "Pierre") && (choixJ2 == "Feuille")) return j2;
-    else if ( (choixJ1 == "Pierre") && (choixJ2 == "Ciseau")) return j1;
-    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Pierre")) return j1;
-    else if ( (choixJ1 == "Feuille") && (choixJ2 == "Ciseaux")) return j2;
-    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Pierre")) return j2;
-    else if ( (choixJ1 == "Ciseaux") && (choixJ2 == "Feuille")) return j1;
+    if ( (choixJ1 == "pierre") && (choixJ2 == "feuille")) return j2;
+    else if ( (choixJ1 == "pierre") && (choixJ2 == "ciseaux")) return j1;
+    else if ( (choixJ1 == "feuille") && (choixJ2 == "pierre")) return j1;
+    else if ( (choixJ1 == "feuille") && (choixJ2 == "ciseaux")) return j2;
+    else if ( (choixJ1 == "ciseaux") && (choixJ2 == "pierre")) return j2;
+    else if ( (choixJ1 == "ciseaux") && (choixJ2 == "feuille")) return j1;
     else if (choixJ1 == choixJ2) {
-        cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
+        cout << "Egalité: " << j1.prenom << " gagne" << endl;
         return j1;
     }
 }
@@ -141,38 +174,38 @@ joueur pile_face_triche (joueur & j1, joueur & j2) {
 }
 
 // Pile ou face normal
-joueur pile_face (joueur & j1, joueur & j2) {
+joueur pile_face (joueur & j1, joueur & j2, unsigned& seed) {
     // Ajouter la partie avec le choix pseudo aléatoire
-    unsigned seed = 1234567890; //Mettre la seed
     static mt19937 generateur(seed);
     uniform_int_distribution<int> distribution(0,1);
-    unsigned choixNombreRandom = 0;
-    cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
+    unsigned choixNombreRandom = distribution(generateur);
+    // cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
     if (choixNombreRandom == 0) {
-        cout << "Pile, j1 gagne !" << endl;
+        cout << "Pile: " << j1.prenom << " gagne" << endl;
         return j1;
     }
     else {
-        cout << "Face, j2 gagne !" << endl;
+        cout << "Pile: " << j2.prenom << " gagne" << endl;
         return j2;
     }
 }
 
 //Pile ou face ou tranche
 joueur pile_face_tranche (joueur & j1, joueur & j2) {
-    string choixJ1, choixJ2;
     cout << "Joueur 1 choisissez entre pile, face et tranche: ";
-    cin >> choixJ1;
+    string choixJ1 (flux_cin_string());
     cout << "Joueur 2 choisissez entre pile, face et tranche : ";
-    cin >> choixJ2;
-    if ( (choixJ1 == "Pile") && (choixJ2 == "Tranche")) return j2;
-    else if ( (choixJ1 == "Pile") && (choixJ2 == "Face")) return j1;
-    else if ( (choixJ1 == "Tranche") && (choixJ2 == "Pile")) return j1;
-    else if ( (choixJ1 == "Tranche") && (choixJ2 == "Face")) return j2;
-    else if ( (choixJ1 == "Face") && (choixJ2 == "Pile")) return j2;
-    else if ( (choixJ1 == "Face") && (choixJ2 == "Tranche")) return j1;
+    string choixJ2 (flux_cin_string());
+    ToLower(choixJ1);
+    ToLower(choixJ2);
+    if ( (choixJ1 == "pile") && (choixJ2 == "tranche")) return j2;
+    else if ( (choixJ1 == "pile") && (choixJ2 == "face")) return j1;
+    else if ( (choixJ1 == "tranche") && (choixJ2 == "pile")) return j1;
+    else if ( (choixJ1 == "tranche") && (choixJ2 == "face")) return j2;
+    else if ( (choixJ1 == "face") && (choixJ2 == "pile")) return j2;
+    else if ( (choixJ1 == "face") && (choixJ2 == "tranche")) return j1;
     else if (choixJ1 == choixJ2) {
-        cout << "Egalité, donc on fait gagner le joueur 1 parceque c'est comme ca.";
+        cout << "Egalite " << j1.prenom << " gagne";
         return j1;
     }
 }
@@ -182,16 +215,17 @@ joueur& jeu_temporaire(joueur& j1, joueur&)
     return j1;
 }
 
-joueur manche (joueur& j1, joueur& j2)
+joueur manche (joueur& j1, joueur& j2, unsigned& seed)
 {
     short victoires_j1 = 0;
     short victoires_j2 = 0;
     joueur gagnant;
-    gagnant = pile_face(j1, j2);
+    gagnant = pile_face(j1, j2, seed);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         ++victoires_j1;
     else
         ++victoires_j2;
+    cout << "Pierre feuille ciseaux entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pierre_feuille_ciseaux(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         ++victoires_j1;
@@ -203,6 +237,7 @@ joueur manche (joueur& j1, joueur& j2)
             return j1;
         return j2;
     }
+    cout << "Pile face tranche entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pile_face_tranche(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         return j1;
@@ -270,40 +305,32 @@ void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueu
     vecteur_joueur = vecteur_resultat;
 }
 
-void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur)
+void tournoi_systeme_suisse(vector<joueur>& vecteur_joueur, unsigned& seed)
 {
     short joueurs_restants;
     joueur gagnant;
     while (vecteur_joueur.back().score == vecteur_joueur[vecteur_joueur.size() - 2].score)
     {
         joueurs_restants = vecteur_joueur.size();
-        if (jeu_choisi == "pile ou face")
+        while (joueurs_restants >= 2)
         {
-            while (joueurs_restants >= 2)
-            {
-                gagnant = manche(vecteur_joueur[joueurs_restants - 1], vecteur_joueur[joueurs_restants - 2]);
-                incrementation_element_vecteur_joueur(vecteur_joueur, gagnant);
-                joueurs_restants -= 2;
-            }
+            gagnant = manche(vecteur_joueur[joueurs_restants - 1], vecteur_joueur[joueurs_restants - 2], seed);
+            incrementation_element_vecteur_joueur(vecteur_joueur, gagnant);
+            joueurs_restants -= 2;
         }
         if (joueurs_restants == 1)
-        {
             ++vecteur_joueur[0].score;
-        }
-
         tri_joueur_selon_score(vecteur_joueur);
     }
 }
 
-void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
+void creationVecteurJoueur(vector<joueur>& vecteur_joueur, short& nb_joueur)
 {
     vecteur_joueur.resize(nb_joueur);
-    string nom_joueur;
     for (size_t indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
     {
-        cin >> nom_joueur;
         joueur joueur_temporaire;
-        joueur_temporaire.prenom = nom_joueur;
+        joueur_temporaire.prenom = flux_cin_string();
         joueur_temporaire.score = 0;
         vecteur_joueur[indice_joueur] = joueur_temporaire;
     }
@@ -311,11 +338,11 @@ void creationVecteurJoueur(vector<joueur>& vecteur_joueur, size_t& nb_joueur)
 
 int main()
 {
-    short nb_joueurs;
-    cin >> nb_joueurs;
+    unsigned seed (lecture_seed());
+    short nb_joueurs (flux_cin_entier());
     vector<joueur> vecteur_joueur;
     creationVecteurJoueur(vecteur_joueur, nb_joueurs);
-    tournoi_systeme_suisse(vecteur_joueur);
-    cout << vecteur_joueur.back();
+    tournoi_systeme_suisse(vecteur_joueur, seed);
+    cout << vecteur_joueur.back().prenom << endl;
     return 0;
 }
