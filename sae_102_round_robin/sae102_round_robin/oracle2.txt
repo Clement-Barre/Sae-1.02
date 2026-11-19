@@ -1,3 +1,8 @@
-1eme place: j3 avec un score de 1
-2eme place: j2 avec un score de 1
-3eme place: j1 avec un score de 1
+1eme place: j1 avec un score de 7
+2eme place: j2 avec un score de 6
+3eme place: j3 avec un score de 5
+4eme place: j4 avec un score de 4
+5eme place: j5 avec un score de 3
+6eme place: j6 avec un score de 2
+7eme place: j7 avec un score de 1
+8eme place: j8 avec un score de 0
