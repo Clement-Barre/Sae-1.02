@@ -141,7 +141,9 @@ joueur& pile_face_ancien (joueur& j1, joueur& j2) {
 }
 
 joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
+    //cout << "Joueur 1 choisissez un coup : ";
     string choixJ1 (flux_cin_string());
+    //cout << "Joueur 2 choisissez un coup : ";
     string choixJ2 (flux_cin_string());
     ToLower(choixJ1);
     ToLower(choixJ2);
@@ -159,13 +161,12 @@ joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
     else if ( (choixJ1 == "feuille") && (choixJ2 == "ciseaux")) return j2;
     else if ( (choixJ1 == "ciseaux") && (choixJ2 == "pierre")) return j2;
     else if ( (choixJ1 == "ciseaux") && (choixJ2 == "feuille")) return j1;
-    else if (choixJ1 == choixJ2) {
-        return j1;
-    }
+    //cout << "Egalité: " << j1.prenom << " gagne" << endl;
+    return j1;
 }
 
 // Pile ou Face truqué
-joueur pile_face_triche (joueur & j1, joueur & j2) {
+joueur pile_face_triche (joueur & j1) {
     cout << "Le gagnant de ce pile ou face est le joueur 1, c'est absolument pas truqué promis";
     return j1;
 }
@@ -178,16 +179,20 @@ joueur pile_face (joueur & j1, joueur & j2, unsigned& seed) {
     unsigned choixNombreRandom = distribution(generateur);
     // cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
     if (choixNombreRandom == 0) {
+        //cout << "Pile: " << j1.prenom << " gagne" << endl;
         return j1;
     }
     else {
+        //cout << "Pile: " << j2.prenom << " gagne" << endl;
         return j2;
     }
 }
 
 //Pile ou face ou tranche
 joueur pile_face_tranche (joueur & j1, joueur & j2) {
+    //cout << "Joueur 1 choisissez entre pile, face et tranche: ";
     string choixJ1 (flux_cin_string());
+    //cout << "Joueur 2 choisissez entre pile, face et tranche : ";
     string choixJ2 (flux_cin_string());
     ToLower(choixJ1);
     ToLower(choixJ2);
@@ -197,9 +202,8 @@ joueur pile_face_tranche (joueur & j1, joueur & j2) {
     else if ( (choixJ1 == "tranche") && (choixJ2 == "face")) return j2;
     else if ( (choixJ1 == "face") && (choixJ2 == "pile")) return j2;
     else if ( (choixJ1 == "face") && (choixJ2 == "tranche")) return j1;
-    else if (choixJ1 == choixJ2) {
-        return j1;
-    }
+    //cout << "Egalite " << j1.prenom << " gagne";
+    return j1;
 }
 
 joueur& jeu_temporaire(joueur& j1, joueur&)
@@ -217,6 +221,7 @@ joueur manche (joueur& j1, joueur& j2, unsigned& seed)
         ++victoires_j1;
     else
         ++victoires_j2;
+    //cout << "Pierre feuille ciseaux entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pierre_feuille_ciseaux(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         ++victoires_j1;
@@ -228,6 +233,7 @@ joueur manche (joueur& j1, joueur& j2, unsigned& seed)
             return j1;
         return j2;
     }
+    //cout << "Pile face tranche entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pile_face_tranche(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         return j1;
@@ -261,7 +267,7 @@ void suppression_element_vecteur_joueur(vector<joueur>& vecteur_joueur, short in
     vector<joueur> vecteur_resultat;
     joueur element = vecteur_joueur[indice_element];
     bool deja_supprime = false;
-    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
+    for (short indice = 0; indice < short (vecteur_joueur.size()); ++indice)
     {
         if (deja_supprime == false && vecteur_joueur[indice].prenom == element.prenom && vecteur_joueur[indice].score == element.score)
         {
@@ -280,7 +286,7 @@ void incrementation_element_vecteur_joueur(vector<joueur>& vecteur_joueur, joueu
     vector<joueur> vecteur_resultat;
     joueur joueur_a_incrementer;
     bool deja_incremente = false;
-    for (short indice = 0; indice < vecteur_joueur.size(); ++indice)
+    for (short indice = 0; indice < short (vecteur_joueur.size()); ++indice)
     {
         if (deja_incremente == false && vecteur_joueur[indice].prenom == gagnant.prenom && vecteur_joueur[indice].score == gagnant.score)
         {
@@ -300,7 +306,7 @@ void tournoi_round_robin(vector<joueur>& vecteur_joueur, unsigned& seed)
     short nb_joueur = vecteur_joueur.size();
     short ecart_entre_joueur = 1;
     joueur gagnant;
-    while (ecart_entre_joueur < vecteur_joueur.size())
+    while (ecart_entre_joueur < nb_joueur)
     {
         for (short indice_joueur (0); indice_joueur + ecart_entre_joueur< nb_joueur ; ++indice_joueur)
         {
@@ -315,7 +321,7 @@ void tournoi_round_robin(vector<joueur>& vecteur_joueur, unsigned& seed)
 void creationVecteurJoueur(vector<joueur>& vecteur_joueur, short& nb_joueur)
 {
     vecteur_joueur.resize(nb_joueur);
-    for (size_t indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
+    for (short indice_joueur = 0; indice_joueur < nb_joueur; ++ indice_joueur)
     {
         joueur joueur_temporaire;
         joueur_temporaire.prenom = flux_cin_string();
