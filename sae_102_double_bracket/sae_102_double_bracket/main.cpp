@@ -141,9 +141,7 @@ joueur& pile_face_ancien (joueur& j1, joueur& j2) {
 }
 
 joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
-    cout << "Joueur 1 choisissez un coup : ";
     string choixJ1 (flux_cin_string());
-    cout << "Joueur 2 choisissez un coup : ";
     string choixJ2 (flux_cin_string());
     ToLower(choixJ1);
     ToLower(choixJ2);
@@ -162,7 +160,6 @@ joueur pierre_feuille_ciseaux (joueur & j1, joueur & j2) {
     else if ( (choixJ1 == "ciseaux") && (choixJ2 == "pierre")) return j2;
     else if ( (choixJ1 == "ciseaux") && (choixJ2 == "feuille")) return j1;
     else if (choixJ1 == choixJ2) {
-        cout << "Egalité: " << j1.prenom << " gagne" << endl;
         return j1;
     }
 }
@@ -181,20 +178,16 @@ joueur pile_face (joueur & j1, joueur & j2, unsigned& seed) {
     unsigned choixNombreRandom = distribution(generateur);
     // cout << "La pièce à été lancé, si c'est pile alors j1 gagne, si c'est face alors j2 gagne";
     if (choixNombreRandom == 0) {
-        cout << "Pile: " << j1.prenom << " gagne" << endl;
         return j1;
     }
     else {
-        cout << "Pile: " << j2.prenom << " gagne" << endl;
         return j2;
     }
 }
 
 //Pile ou face ou tranche
 joueur pile_face_tranche (joueur & j1, joueur & j2) {
-    cout << "Joueur 1 choisissez entre pile, face et tranche: ";
     string choixJ1 (flux_cin_string());
-    cout << "Joueur 2 choisissez entre pile, face et tranche : ";
     string choixJ2 (flux_cin_string());
     ToLower(choixJ1);
     ToLower(choixJ2);
@@ -205,7 +198,6 @@ joueur pile_face_tranche (joueur & j1, joueur & j2) {
     else if ( (choixJ1 == "face") && (choixJ2 == "pile")) return j2;
     else if ( (choixJ1 == "face") && (choixJ2 == "tranche")) return j1;
     else if (choixJ1 == choixJ2) {
-        cout << "Egalite " << j1.prenom << " gagne";
         return j1;
     }
 }
@@ -225,7 +217,6 @@ joueur manche (joueur& j1, joueur& j2, unsigned& seed)
         ++victoires_j1;
     else
         ++victoires_j2;
-    cout << "Pierre feuille ciseaux entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pierre_feuille_ciseaux(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         ++victoires_j1;
@@ -237,7 +228,6 @@ joueur manche (joueur& j1, joueur& j2, unsigned& seed)
             return j1;
         return j2;
     }
-    cout << "Pile face tranche entre " << j1.prenom << " et " << j2.prenom << endl;
     gagnant = pile_face_tranche(j1, j2);
     if (gagnant.prenom == j1.prenom && gagnant.score == j1.score)
         return j1;
@@ -385,6 +375,6 @@ int main()
     vector<joueur> vecteur_joueur;
     creationVecteurJoueur(vecteur_joueur, nb_joueurs);
     tournoi_double_bracket(vecteur_joueur, seed);
-    cout << vecteur_joueur.back().prenom << endl;
+    affichageVecteurJoueur(vecteur_joueur);
     return 0;
 }
